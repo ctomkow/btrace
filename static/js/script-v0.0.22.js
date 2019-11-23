@@ -18,6 +18,10 @@ function initMap() {
         });
     });
 
+    $.get("/api/feed/stime/1572566400/etime/1574499833/?prefix=128.189.0.0/16"), function(updates_data) {
+        console.log(updates_data)
+    }
+
     heatTheMap()
 }
 

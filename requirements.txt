@@ -1,0 +1,4 @@
+Flask>=1.0.0
+gunicorn>=19.7.1
+python-dotenv>=0.10.3
+pybgpstream>=2.0.0

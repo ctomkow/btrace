@@ -25,7 +25,6 @@ function heatTheMap() {
     var heatmapData = [];
     $.get("/api/pop/rv_amsix", function (pop_coords) {
         heatmapData.push(new google.maps.LatLng(pop_coords.lat, pop_coords.lng));
-
         // .get is async ...
         console.log(heatmapData);
         var heatmap = new google.maps.visualization.HeatmapLayer({

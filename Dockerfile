@@ -34,4 +34,4 @@ COPY . ./
 
 # Run a WSGI server to serve the application. gunicorn must be declared as
 # a dependency in requirements.txt.
-CMD gunicorn -b :$PORT --workers 1 --threads 8 main:app
+CMD gunicorn -b :$PORT --workers 2 --threads 16 main:app --log-level debug

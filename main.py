@@ -4,7 +4,7 @@
 import os, datetime
 from os.path import join, dirname
 
-from flask import Flask, render_template, json, request
+from flask import Flask, render_template, json, request, Response
 from dotenv import load_dotenv
 from pybgpstream import BGPStream
 
@@ -30,7 +30,7 @@ def render():
     return render_template(
         "index.html",
         title="tracing bgp withdrawals across the world",
-        map_key=os.environ.get("MAP_KEY")
+        map_key=os.environ.get("MAP_KEY-dev")
     )
 
 
@@ -43,22 +43,33 @@ def api_pops():
 def api_pop(pop_name):
     return json.jsonify(pop_dict[pop_name])
 
-@app.route("/api/feed/stime/<s_time>/etime/<e_time>/")
-def api_feed_prefix(s_time, e_time):
-    start_time = datetime.datetime.fromtimestamp(int(s_time)).strftime('%Y-%m-%d %H:%M:%S')
-    end_time   = datetime.datetime.fromtimestamp(int(e_time)).strftime('%Y-%m-%d %H:%M:%S')
+
+@app.route("/api/bgp/withdrawal/stime/<s_time>/etime/<e_time>/")
+def api_bgp_withdrawal_prefix(s_time, e_time):
+    s_time = int(s_time)
+    e_time = int(e_time)
+    if e_time == 0:  # end time is now!
+        end_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    elif s_time > e_time:
+        return Response("", status=400, mimetype='application/json')
+    else:
+        end_time = datetime.datetime.fromtimestamp(e_time).strftime('%Y-%m-%d %H:%M:%S')
+    start_time = datetime.datetime.fromtimestamp(s_time).strftime('%Y-%m-%d %H:%M:%S')
     prefix = request.args.get("prefix")
+
     stream = BGPStream(
         from_time=start_time,
         until_time=end_time,
         record_type="updates",
         filter="prefix " + prefix
     )
-    update_type = []
+    bgp_data = {}
     for elem in stream:
-        update_type.append(elem.type)
-    return json.jsonify(update_type)
-    # TODO: return proper data not dummy data !@!@!@
+        print(elem, flush=True)
+        if elem.type == "W":
+            bgp_data[elem.time] = elem.collector
+
+    return json.jsonify(bgp_data)
 
 
 if __name__ == "__main__":

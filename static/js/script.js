@@ -18,9 +18,9 @@ function initMap() {
         });
     });
 
-    $.get("/api/feed/stime/1572566400/etime/1574499833/?prefix=128.189.0.0/16"), function(updates_data) {
-        console.log(updates_data)
-    }
+    $.get("/api/bgp/withdrawal/stime/1574568000/etime/1574569800/?prefix=128.189.0.0/16"), function(updates_data) {
+        console.log(updates_data);
+    };
 
     heatTheMap()
 }
@@ -30,7 +30,6 @@ function heatTheMap() {
     $.get("/api/pop/rv_amsix", function (pop_coords) {
         heatmapData.push(new google.maps.LatLng(pop_coords.lat, pop_coords.lng));
         // .get is async ...
-        console.log(heatmapData);
         var heatmap = new google.maps.visualization.HeatmapLayer({
         data: heatmapData,
         radius: 15,

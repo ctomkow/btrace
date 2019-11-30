@@ -4,6 +4,12 @@
 runtime: custom
 env: flex
 
+manual_scaling:
+  instances: 1
+  cpu: 1
+  memory_gb: 0.6
+  disk_size_gb: 10
+
 default_expiration: "1s"
 
 handlers:
